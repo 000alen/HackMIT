@@ -1,38 +1,38 @@
 ABC = {
     "AAAAA": "a",
     "AAAAB": "b",
-    "AAABA": "c",	
+    "AAABA": "c",
     "AAABB": "d",
-    "AABAA": "e",	
+    "AABAA": "e",
     "AABAB": "f",
-    "AABBA": "g",	
+    "AABBA": "g",
     "AABBB": "h",
     "ABAAA": "i",
-    # "ABAAA": "j",	
-    "ABAAB": "k",
-    "ABABA": "l",	
-    "ABABB": "m",
-    "ABBAA": "n",	
-    "ABBAB": "o",
-    "ABBBA": "p",	
-    "ABBBB": "q",
-    "BAAAA": "r",	
-    "BAAAB": "s",
-    "BAABA": "t",	
-    "BAABB": "u",
-    # "BAABB": "v",
-    "BABAA": "w",	
-    "BABAB": "x",
-    "BABBA": "y",
-    "BABBB": "z"
+    "ABAAB": "j",
+    "ABABA": "k",
+    "ABABB": "l",
+    "ABBAA": "m",
+    "ABBAB": "n",
+    "ABBBA": "o",
+    "ABBBB": "p",
+    "BAAAA": "q",
+    "BAAAB": "r",
+    "BAABA": "s",
+    "BAABB": "t",
+    "BABAA": "u",
+    "BABAB": "v",
+    "BABBA": "w",
+    "BABBB": "x",
+    "BBAAA": "y",
+    "BBAAB": "z"
 }
 
-coded_string = input(">>> ")
-coded_sentence = coded_string.split()
+def bacon(in_string):
+    in_sentence = in_string.split()
 
-sentence = []
-for coded_word in coded_sentence:
-    sentence.append("".join(ABC.get(coded_word[i : i + 5], "?") for i in range(0, len(coded_word), 5)))
+    out_sentence = []
+    for in_word in in_sentence:
+        out_sentence.append("".join(ABC.get(in_word[i : i + 5], "?") for i in range(0, len(in_word), 5)))
 
-sentence_string = " ".join(sentence)
-print(sentence_string)
+    out_string = " ".join(out_sentence)
+    return out_string

@@ -3,7 +3,6 @@
 // - Uses the Autokey cipher's method of expanding the encryption key with the plaintext
 // - Base64 encodes the resulting ASCII ciphertext for easier display
 const {Base64} = require('js-base64');
-const readline = require('readline');
 
 const beaufortAutokey = (key) => {
   const ascii = () => Array.from({ length: 256 }, (_, i) => String.fromCharCode(i)).join('');
@@ -45,14 +44,5 @@ const beaufortAutokey = (key) => {
   return { encrypt, decrypt };
 };
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-
 x = beaufortAutokey("daniildubov");
-
-rl.question(">>> ", (text) => {
-    console.log(x.decrypt(text));
-    rl.close();
-});
+console.log(x.decrypt(process.argv[2]));

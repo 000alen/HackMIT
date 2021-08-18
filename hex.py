@@ -1,5 +1,4 @@
-hex_string = input(">>> ")
-bytes_object = bytes.fromhex(hex_string)
-string = bytes_object.decode("ASCII")
-
-print(string)
+def hex(in_string):
+    in_object = bytes.fromhex(in_string)
+    out_string = in_object.decode("ASCII")
+    return out_string
