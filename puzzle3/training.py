@@ -7,10 +7,15 @@ model = transformers.AutoModelForSequenceClassification.from_pretrained("HackMIT
 
 tokenizer = transformers.AutoTokenizer.from_pretrained("HackMIT/double-agent")
 
-dataset = datasets.load_dataset("glue", "sst2")["validation"]
-dataset = dataset.map(lambda examples: {"labels": examples["label"]})
-dataset = dataset.map(lambda examples: {"input_ids": tokenizer.encode(examples["sentence"], max_length=512, padding="max_length", truncation=True)})
-dataset.set_format("torch")
+train_dataset = datasets.load_dataset("glue", "sst2")["train"]
+train_dataset = train_dataset.map(lambda examples: {"labels": examples["label"]})
+train_dataset = train_dataset.map(lambda examples: {"input_ids": tokenizer.encode(examples["sentence"], max_length=512, padding="max_length", truncation=True)})
+train_dataset.set_format("torch")
+
+validation_dataset = datasets.load_dataset("glue", "sst2")["validation"]
+validation_dataset = validation_dataset.map(lambda examples: {"labels": examples["label"]})
+validation_dataset = validation_dataset.map(lambda examples: {"input_ids": tokenizer.encode(examples["sentence"], max_length=512, padding="max_length", truncation=True)})
+validation_dataset.set_format("torch")
 
 metric = datasets.load_metric("accuracy")
 
@@ -26,16 +31,17 @@ training_args = transformers.TrainingArguments("test_trainer")
 trainer = transformers.Trainer(
     model=model, 
     args=training_args, 
-    train_dataset=dataset, 
-    eval_dataset=dataset,
+    train_dataset=train_dataset, 
+    eval_dataset=validation_dataset,
 )
-print(trainer.train())
+
+trainer.train()
 
 trainer = transformers.Trainer(
     model=model, 
     args=training_args, 
-    train_dataset=dataset, 
-    eval_dataset=dataset,
+    train_dataset=train_dataset, 
+    eval_dataset=validation_dataset,
     compute_metrics=compute_metrics
 )
 print(trainer.evaluate())
