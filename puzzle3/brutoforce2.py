@@ -1,8 +1,9 @@
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
-from torch import save
+import transformers
+import torch
 
-model = AutoModelForSequenceClassification.from_pretrained("HackMIT/double-agent")
-
+model = transformers.AutoModelForSequenceClassification.from_pretrained("HackMIT/double-agent")
+model.load_state_dict(torch.load("model 0.89.pt"))
+model.eval()
 
 def decode_message_from_model(model):
     idxs = [int(param.sum().item()) % 27 + ord("a") for param in model.parameters()]
@@ -22,7 +23,7 @@ def mul(x):
     return y
 
 
-target_string = "b twlo s twlo b twlo s amc b hood"
+target_string = "b uber s bmbl b zm s abnb b abnb"
 for i, parameter in enumerate(model.parameters()):
     if i >= len(target_string):
         break
@@ -49,4 +50,4 @@ for i, parameter in enumerate(model.parameters()):
             raise Exception("Cagaste; didn't work")
 
 print(decode_message_from_model(model))
-save(model.state_dict(), "alen2.pt")
+torch.save(model.state_dict(), "Seba 0.89.pt")

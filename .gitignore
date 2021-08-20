@@ -1,4 +1,5 @@
-checkpoint-*/
+test_trainer/
+with_loss_and_optimizer/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

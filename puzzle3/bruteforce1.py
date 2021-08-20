@@ -22,7 +22,7 @@ def mul(x):
     return y
 
 
-target_string = "b uber s bmbl b zm s abnb b abnb"
+target_string = "b twlo s twlo b twlo s amc b hood"
 for i, parameter in enumerate(model.parameters()):
     if i >= len(target_string):
         break
@@ -42,4 +42,4 @@ for i, parameter in enumerate(model.parameters()):
         raise Exception("Cagaste; didn't work")
 
 print(decode_message_from_model(model))
-save(model.state_dict(), "seba.pt")
+save(model.state_dict(), "Alen.pt")
