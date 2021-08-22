@@ -1,7 +1,14 @@
 test_trainer/
 with_loss_and_optimizer/
 git/
-client.zip
+commandcenter/
+hack_cookie/
+beaverstreethack/
+double_agent/
+hackcrypto
+chad-to-the-moon/
+Seba's client/
+*.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
