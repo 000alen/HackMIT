@@ -1,12 +1,13 @@
-import hashlib 
+import hashlib
 import datetime
 import json
 from utils import trim_string
 from time import time
 from typing import Union, List
-import constants
-import crypto
+import constants as constants
+import crypto as crypto
 import jsonpickle
+
 
 class Transaction:
     def __init__(self, id: str, sender: str, receiver: str, value: int, signature: str):
@@ -14,7 +15,7 @@ class Transaction:
         self.sender = sender
         self.receiver = receiver
         self.value = value
-        self.signature = signature 
+        self.signature = signature
 
     def __str__(self):
         return json.dumps({
@@ -24,7 +25,7 @@ class Transaction:
             'value': self.value,
             'signature': self.signature
         })
-    
+
     def pretty_print(self, max_str_len=None, agents=None):
         sender = agents[self.sender] if agents and self.sender in agents else self.sender
         receiver = agents[self.receiver] if agents and self.receiver in agents else self.receiver
@@ -32,7 +33,7 @@ class Transaction:
         if(not max_str_len):
             return f"[id: {self.id}, {sender} -> {receiver}, {self.value} coins]"
         return f"[id: {trim_string(self.id, max_str_len//2)}, {trim_string(sender, max_str_len)} -> {trim_string(receiver, max_str_len)}, {self.value} coins]"
-    
+
     def comp(self):
         return json.dumps({
             'id': self.id,
@@ -41,6 +42,7 @@ class Transaction:
             'value': self.value,
         })
 
+    # XXX
     def valid_signature(self):
         if self.sender == "mined":
             return True
@@ -54,28 +56,27 @@ class Transaction:
             'value': self.value,
             'signature': self.signature
         }
-    
+
     @staticmethod
     def from_json(jobj):
         return Transaction(
-            id = str(jobj['id']),
-            sender = jobj['sender'],
-            receiver = jobj['receiver'],
-            value = int(jobj['value']),
-            signature = jobj['signature']
+            id=str(jobj['id']),
+            sender=jobj['sender'],
+            receiver=jobj['receiver'],
+            value=int(jobj['value']),
+            signature=jobj['signature']
         )
-    
+
     def sign(self, private):
         self.signature = crypto.sign(self.comp(), private)
 
 
-
 class Block:
-    def __init__(self, transactions: List[Transaction], previous_hash: str, miner = "Anonymous", nonce: int = 0, height: int = -1, timestamp = int(time())):
+    def __init__(self, transactions: List[Transaction], previous_hash: str, miner="Anonymous", nonce: int = 0, height: int = -1, timestamp=int(time())):
         self.timestamp = timestamp
         self.transactions = transactions
         self.previous_hash = previous_hash
-        self.nonce = nonce 
+        self.nonce = nonce
         self.height = height
         self.miner = miner
 
@@ -94,7 +95,7 @@ class Block:
     def get_hash(self):
         sha = hashlib.sha256(self.get_hash_str())
         return sha.hexdigest()
-    
+
     def set_parent(self, parent):
         self.parent = parent
         self.height = parent.height + 1
@@ -102,7 +103,7 @@ class Block:
     def print_transactions(self):
         for tr in self.transactions:
             print(str(tr))
-    
+
     def is_valid(self):
         return int(self.get_hash(), 16) < constants.DIFFICULTY
 
@@ -113,7 +114,7 @@ class Block:
             'previous_hash': str(self.previous_hash),
             'nonce': self.nonce
         })
-    
+
     def to_json(self):
         return {
             'timestamp': self.timestamp,
@@ -122,31 +123,29 @@ class Block:
             'nonce': self.nonce
         }
 
-
     @staticmethod
     def from_json(jobj):
         return Block(
-            timestamp = int(jobj['timestamp']),
-            transactions = [
+            timestamp=int(jobj['timestamp']),
+            transactions=[
                 Transaction.from_json(tj)
                 for tj in jobj['transactions']
             ],
-            previous_hash = str(jobj['previous_hash']),
-            nonce = int(jobj['nonce'])
+            previous_hash=str(jobj['previous_hash']),
+            nonce=int(jobj['nonce'])
         )
 
 
 def create_genesis_block():
-    return Block( [], "")
+    return Block([], "")
+
 
 class Blockchain:
     def __init__(self):
         first_block = create_genesis_block()
 
-        self.head = first_block 
+        self.head = first_block
         self.blocks = {first_block.get_hash(): first_block}
-
-    
 
     def traverse_blocks(self, head: Block, include_head=True):
         if include_head:
@@ -163,7 +162,7 @@ class Blockchain:
         for block in self.traverse_blocks(self.head, include_head=True):
             if not block:
                 break
-            
+
             for txn in block.transactions:
                 if txn.sender == address and txn.receiver != address:
                     total -= txn.value
@@ -171,7 +170,7 @@ class Blockchain:
                     total += txn.value
         return total
 
-    def add_block(self, block: Block, cheat=True):
+    def add_block(self, block: Block, cheat=False):
         """Checks the entire chain for valid transactions
         and checks proof of work. Then adds block."""
 
@@ -180,7 +179,7 @@ class Blockchain:
         # We already know this block.
         if block_hash in self.blocks:
             return False, "Known block.", {}
-        
+
         # Parent doesn't exist :(
         if block.previous_hash not in self.blocks:
             return False, "No valid parent.", {}
@@ -202,14 +201,14 @@ class Blockchain:
                 if c_txn.comp() in b.transaction_map:
                     # We found the same transaction in a previous block.
                     return False, "Transaction replay detected.", {"txn": c_txn}
-        
+
         # For every transaction, does the sender own this money?
         reward_counted = False
         running_balance = {}
         for txn in block.transactions:
             if txn.value < 0:
                 return False, "Amount can't be negative.", {"txn": txn}
-            
+
             if txn.sender not in running_balance:
                 running_balance[txn.sender] = 0
 
@@ -219,7 +218,7 @@ class Blockchain:
                 # this payment to anyone she likes.
                 if not cheat and txn.value > constants.REWARD:
                     return False, "Incorrect miner reward.", {"txn": txn}
-                
+
                 # Let's also make sure the reward is only given
                 # once and once only.
                 if reward_counted:
@@ -228,7 +227,8 @@ class Blockchain:
                 reward_counted = True
                 running_balance[txn.sender] += constants.REWARD
             else:
-                sender_coins = self.get_balance(txn.sender) + running_balance[txn.sender]
+                sender_coins = self.get_balance(
+                    txn.sender) + running_balance[txn.sender]
                 print("sender balance: ", sender_coins)
                 print("value: ", txn.value)
                 if sender_coins < txn.value:
@@ -236,7 +236,7 @@ class Blockchain:
                     # block is invalid.
                     return False, "sender doesn't have enough coins.", {"txn": txn}
                 running_balance[txn.sender] -= txn.value
-        
+
         # Looks like everything is set with this block.
         # Let's add this block and compute the longest
         # chain.
@@ -244,12 +244,12 @@ class Blockchain:
         self.blocks[block_hash] = block
         if block.height > self.head.height:
             self.head = block
-        
+
         return True, "Block added.", {}
 
     def to_json(self):
         return jsonpickle.encode(self)
-        
+
     # needs to flatten Block linked list to be serializable
     def _flatten(self):
         for block in self.blocks.values():
@@ -260,8 +260,8 @@ class Blockchain:
     def _unflatten(self):
         for block in self.blocks.values():
             try:
-                block.parent_hash 
+                block.parent_hash
             except:
                 block.parent_hash = ""
             if(block.parent_hash):
-                block.parent = self.blocks[block.parent_hash] #type: ignore
+                block.parent = self.blocks[block.parent_hash]  # type: ignore
