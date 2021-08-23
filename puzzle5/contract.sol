@@ -22,7 +22,7 @@ contract ChadPuzzle {
     // This is always called by our factory
     constructor(uint _board) public {
         board = _board;
-   }
+    }
 
    function fall() private{
       uint top = (board & left_mask) >> (length - cols * 2);

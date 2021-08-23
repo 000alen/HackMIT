@@ -1,7 +1,4 @@
-var fs = require('fs');
 var Web3 = require('web3');
-
-var secrets = JSON.parse(fs.readFileSync('./secrets.json', 'utf8'));
 
 var web3 = new Web3(new Web3.providers.HttpProvider(
     secrets.provider
