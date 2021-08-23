@@ -325,20 +325,21 @@ contract = w3.eth.contract(CONTRACT_ADDRESS, abi=abi)
 
 player_position = contract.functions.getPlayerPos().call()
 
-# board_int = contract.functions.getBoard().call()
-board_int = contract.functions.getBoard().transact()
+# board_int = contract.functions.getBoard().transact()
+# board_int = 882893299950477527990625818533691396
 
-print(board_int)
+board_int = contract.functions.getBoard().call()
+board_bin = int2base(board_int, 2)
+board = intToBoard(board_bin)
 
+print(player_position)
+print(board)
 
-# board_bin = int2base(board_int, 2)
+board.append(["x" if i == player_position else 0 for i in range(len(board[0]))])
 
-# board = intToBoard(board_bin)
-# board.append(["x" if i == player_position else 0 for i in range(len(board[0]))])
+board = tuple(map(tuple, board))
 
-# board = tuple(map(tuple, board))
-
-# steps, lives = solve(board, 60)
+print(fast_solve(board, 60))
 
 # wrapper = {
 #     "left": contract.functions.left,
