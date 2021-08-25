@@ -10,6 +10,10 @@ chad-to-the-moon/
 Seba's client/
 *.zip
 
+# Trained models
+puzzle3/Alen 0.89.pt
+puzzle3/Seba 0.89.pt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
